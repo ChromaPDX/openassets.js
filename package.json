@@ -1,3 +1,5 @@
 { "dependencies" : {"openassets":"*",
-                    "request":"*"}
+                    "request":"*",
+                    "command-line-args":"*"
+                  }
 }
