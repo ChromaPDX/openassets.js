@@ -1,29 +1,30 @@
+var fs = require('fs')
+var url = require('url')
 // Required modules
 var openassets = require('openassets'),
     // Bitcore provides an excellent JSON-RPC client implementation. Substitute your favorite.
-    RpcClient  = require('bitcore/lib/RpcClient');
+    request  = require('request');
 
-// JSON-RPC connection information (read from environment variables)
-config = {
-  host:     process.env.JSONRPC_HOST,
-  port:     process.env.JSONRPC_PORT,
-  user:     process.env.JSONRPC_USER,
-  pass:     process.env.JSONRPC_PASS,
-  protocol: process.env.JSONRPC_PROTOCOL
-};
+var settings = JSON.parse(fs.readFileSync("settings.json"))
+var config = { url: "https://api.chain.com/v2"};
 
 // A wrapper to generate a "transaction provider" given a config.
-// 
+//
 // For generality, connection to the Bitcoin JSON-RPC service is
-// externalized into the concept of a "transaction provider" that is 
+// externalized into the concept of a "transaction provider" that is
 // expected to conform to the following simple API: given a Bitcoin
 // transaction hash and a callback function, the provider must
 // populate the callback with the results of the 'getRawTransaction'
 // JSON-RPC call.
 getTransactionProvider = function getTransactionProvider(config) {
   return function transactionProvider(hash, cb) {
-    var rpcc = new RpcClient(config);
-    rpcc.getRawTransaction(hash,cb);
+    var api = url.parse(config.url)
+    api.auth = settings.key+":"+settings.secret
+    api.pathname = api.pathname+"/bitcoin/transactions/"+hash+"/hex"
+    request(url.format(api), function(err, resp, body){
+      var response = JSON.parse(body)
+      cb(err, {result:response.hex}) // body.message body.result
+    });
   };
 };
 
