@@ -28,13 +28,13 @@ if (options.help || !options.words ||
 }
 
 //
-var coin_engine = new openassets.ColoringEngine(getChainTransactionProvider(settings))
+var coinEngine = new openassets.ColoringEngine(getChainTransactionProvider(settings))
 
 var cmd = options.words.shift()
 if (cmd === 'read') {
-  var txid = options.words.shift()
-  console.log('read', txid)
-  doRead(coin_engine, txid)
+  var txId = options.words.shift()
+  console.log('read', txId)
+  doRead(coinEngine, txId)
 }
 
 function doRead (engine, txid) {
@@ -49,7 +49,7 @@ function doRead (engine, txid) {
   // that output.
   engine.getOutput(txid, 0, function (err, data) {
     // If anything went wrong, say so
-    if (err) console.log(err.message)
+    if (err) { console.log(err.message) }
 
     // Print the asset information as a raw TransactionOutput object
     console.log(data)
@@ -60,9 +60,9 @@ function doRead (engine, txid) {
 }
 
 function getChainTransactionProvider (settings) {
-  var api_url = 'https://api.chain.com/v2'
+  var apiUrl = 'https://api.chain.com/v2'
   return function transactionProvider (hash, cb) {
-    var api = url.parse(api_url)
+    var api = url.parse(apiUrl)
     api.auth = settings.key + ':' + settings.secret
     api.pathname = api.pathname + '/bitcoin/transactions/' + hash + '/hex'
     request(url.format(api), function (err, resp, body) {

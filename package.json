@@ -1,5 +1,6 @@
 { "dependencies" : {"openassets":"*",
                     "request":"*",
                     "command-line-args":"*"
-                  }
+                  },
+  "devDependencies": {"eslint": "*"}
 }

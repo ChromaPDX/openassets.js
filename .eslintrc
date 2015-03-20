@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "semi": false,
+    "quotes": "single"
+  },
+  "globals" : {
+    "console": false,
+    "require": false
+  }
+}
