@@ -8,7 +8,6 @@ var cliArgs = require('command-line-args')
 
 // api keys
 var settings = JSON.parse(fs.readFileSync('settings.json'))
-var config = { url: 'https://api.chain.com/v2'}
 
 var cli = cliArgs([
   { name: 'help', type: Boolean, description: 'Print usage instructions' },
@@ -28,17 +27,19 @@ if (options.help || !options.words ||
   process.exit()
 }
 
+//
+var coin_engine = new openassets.ColoringEngine(getChainTransactionProvider(settings))
+
 var cmd = options.words.shift()
 if (cmd === 'read') {
   var txid = options.words.shift()
   console.log('read', txid)
-  doRead(txid)
+  doRead(coin_engine, txid)
 }
 
-function doRead (txid) {
+function doRead (engine, txid) {
   // Create an instance of the Open Assets ColoringEngine, and pass to
   // it a configured transaction provider
-  var ce = new openassets.ColoringEngine(getChainTransactionProvider(config))
 
   // Use the coloring engine to obtain information about a transaction. In
   // this case, get the 0th output of a known Open Assets 'issuance' transaction.
@@ -46,7 +47,7 @@ function doRead (txid) {
   // of the output to retrieve, and the third is a callback function that will
   // be populated with the asset ID and asset quantity information, if any, associated with
   // that output.
-  ce.getOutput(txid, 0, function (err, data) {
+  engine.getOutput(txid, 0, function (err, data) {
     // If anything went wrong, say so
     if (err) console.log(err.message)
 
@@ -58,9 +59,10 @@ function doRead (txid) {
   })
 }
 
-function getChainTransactionProvider (config) {
+function getChainTransactionProvider (settings) {
+  var api_url = 'https://api.chain.com/v2'
   return function transactionProvider (hash, cb) {
-    var api = url.parse(config.url)
+    var api = url.parse(api_url)
     api.auth = settings.key + ':' + settings.secret
     api.pathname = api.pathname + '/bitcoin/transactions/' + hash + '/hex'
     request(url.format(api), function (err, resp, body) {
