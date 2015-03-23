@@ -2,7 +2,7 @@
 var fs = require('fs')
 var url = require('url')
 // npm modules
-var openassets = require('openassets')
+var openassets = require('./openassets.js/index.js')
 var request = require('request')
 var cliArgs = require('command-line-args')
 
@@ -21,8 +21,8 @@ var usage = cli.getUsage({
   footer: 'read <transaction id>'
 })
 
-if (options.help || !options.words ||
-  (options.words && options.words.length === 0)) {
+if ( options.help || !options.words ||
+     (options.words && options.words.length === 0) ) {
   console.log(usage)
   process.exit()
 }
@@ -35,6 +35,12 @@ if (cmd === 'read') {
   var txId = options.words.shift()
   console.log('read', txId)
   doRead(coinEngine, txId)
+}
+if (cmd === 'issue') {
+  var issueParams = options.words
+  console.log('issue', issueParams)
+  var issueTx = doIssue(coinEngine, issueParams)
+  console.log('issueTx', issueTx)
 }
 
 function doRead (engine, txid) {
@@ -70,4 +76,8 @@ function getChainTransactionProvider (settings) {
       cb(err, {result: response.hex}) // body.message body.result
     })
   }
+}
+
+function doIssue (engine, params) {
+  return "tx"
 }

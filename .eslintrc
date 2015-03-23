@@ -1,10 +1,12 @@
 {
   "rules": {
     "semi": false,
-    "quotes": "single"
+    "quotes": "single",
+    "no-console": false
   },
   "globals" : {
     "console": false,
+    "process": false,
     "require": false
   }
 }
